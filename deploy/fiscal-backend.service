@@ -1,0 +1,42 @@
+# ============================================================
+# systemd — Backend Fiscalização de Linhas
+# Copiar para: /etc/systemd/system/fiscal-backend.service
+#
+# Após copiar:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable fiscal-backend
+#   sudo systemctl start fiscal-backend
+# ============================================================
+
+[Unit]
+Description=Fiscalização de Linhas Sambaíba — FastAPI Backend
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/fiscal-sambaiba/backend
+
+# Carrega variáveis do .env
+EnvironmentFile=/opt/fiscal-sambaiba/backend/.env
+
+# Porta 8001 — não conflita com gestão de pátio v3
+ExecStart=/opt/fiscal-sambaiba/venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 \
+    --port 8001 \
+    --workers 2 \
+    --log-level info
+
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+
+# Logs em /var/log/journal (journalctl -u fiscal-backend -f)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fiscal-backend
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,449 @@
+/* Painel do Coordenador — reaproveita a paleta da marca Fiscal Sambaíba
+   (roxo #7e14ff / #863bff como cor primária, azul #1d4ed8 como acento,
+   cinzas neutros #6b7280 / #9ca3af / #e5e7eb, vermelho #dc2626 para perdas) */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #863bff;
+  color: #fff;
+}
+
+.topo-marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topo-emoji {
+  font-size: 28px;
+}
+
+.topo h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.topo p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.usuario-logado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #fff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px 40px;
+}
+
+.cartao {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(17, 24, 39, 0.08);
+  margin-bottom: 20px;
+}
+
+.cartao-estreito {
+  max-width: 360px;
+  margin: 48px auto;
+}
+
+.cartao h2 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.texto-apoio {
+  color: #6b7280;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin: 12px 0 4px;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+}
+
+form input:focus,
+form select:focus {
+  outline: none;
+  border-color: #863bff;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 18px;
+  cursor: pointer;
+}
+
+.btn-primario {
+  background: #7e14ff;
+  color: #fff;
+  margin-top: 16px;
+}
+
+.btn-primario:hover {
+  background: #6b0fe0;
+}
+
+.mensagem-erro {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.form-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.form-filtros .campo {
+  flex: 1 1 160px;
+}
+
+.form-filtros label {
+  margin: 0 0 4px;
+}
+
+.form-filtros .btn-primario {
+  margin-top: 0;
+  height: 42px;
+}
+
+.legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bolinha {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.bolinha-pendente { background: #9ca3af; }
+.bolinha-realizada { background: #16a34a; }
+.bolinha-perdida { background: #dc2626; }
+.bolinha-coberta { background: #7c3aed; }
+
+.timeline {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  border-left: 2px solid #e5e7eb;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 12px 0 12px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #9ca3af;
+}
+
+.timeline-item.status-realizada::before { background: #16a34a; }
+.timeline-item.status-perdida::before { background: #dc2626; }
+.timeline-item.tem-cobertura::before { background: #7c3aed; }
+
+.timeline-linha1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.timeline-horario {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  min-width: 52px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.badge-terminal-tp { background: #dbeafe; color: #1d4ed8; }
+.badge-terminal-ts { background: #ede9fe; color: #7c3aed; }
+
+.badge-status-pendente { background: #f3f4f6; color: #6b7280; }
+.badge-status-realizada { background: #dcfce7; color: #16a34a; }
+.badge-status-perdida { background: #fee2e2; color: #dc2626; }
+
+.timeline-tabela {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.timeline-linha2 {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.timeline-dupla {
+  color: #374151;
+}
+
+.timeline-cobertura {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #7c3aed;
+  background: #f5f3ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+.timeline-motivo-troca {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ── Login "Gestão de Linhas" — tema escuro/vermelho neon, mesma identidade
+   visual do login da v3 (JetBrains Mono + Barlow Condensed). Escopo só no
+   bloco de login — o restante do painel mantém o tema claro/roxo acima. ── */
+
+#bloco-login.login-shell {
+  max-width: 380px;
+  margin: 48px auto;
+  padding: 32px 28px;
+  background: #0a0a0a;
+  border: 1px solid #dc2626;
+  border-radius: 16px;
+  box-shadow: 0 0 28px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(220, 38, 38, 0.15) inset;
+  color: #f5f5f0;
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo-placeholder {
+  font-size: 40px;
+  line-height: 1;
+  color: #dc2626;
+  text-shadow: 0 0 14px rgba(220, 38, 38, 0.85);
+}
+
+.login-empresa {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a3a3a3;
+  margin-top: 8px;
+}
+
+.login-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  letter-spacing: 0.02em;
+  color: #f5f5f0;
+  margin-top: 4px;
+}
+
+.login-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+.login-card-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: #f5f5f0;
+  margin: 0 0 2px;
+}
+
+.login-card-hint {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #a3a3a3;
+  margin: 0 0 16px;
+}
+
+#bloco-login .form-group {
+  margin-bottom: 4px;
+}
+
+#bloco-login .form-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a3a3a3;
+  margin: 12px 0 4px;
+}
+
+#bloco-login .form-input {
+  background: #141414;
+  border: 1px solid #3a1414;
+  border-radius: 8px;
+  color: #f5f5f0;
+  font-family: "JetBrains Mono", monospace;
+}
+
+#bloco-login .form-input::placeholder {
+  color: #525252;
+}
+
+#bloco-login .form-input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap .form-input {
+  padding-right: 40px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+}
+
+#bloco-login .btn-full {
+  width: 100%;
+}
+
+#bloco-login .btn-primario {
+  background: #dc2626;
+  box-shadow: 0 0 18px rgba(220, 38, 38, 0.45);
+}
+
+#bloco-login .btn-primario:hover {
+  background: #b91c1c;
+}
+
+#bloco-login .mensagem-erro {
+  color: #f87171;
+}
+
+.login-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: #737373;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #737373;
+  margin-right: 6px;
+}
+
+.status-dot.ok {
+  background: #16a34a;
+  box-shadow: 0 0 6px #16a34a;
+}
+
+.status-dot.erro {
+  background: #dc2626;
+  box-shadow: 0 0 6px #dc2626;
+}

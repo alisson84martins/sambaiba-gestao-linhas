@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel do Coordenador — Fiscal Sambaíba</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/painel-coordenador.css" />
+  </head>
+  <body>
+    <div class="topo">
+      <div class="topo-marca">
+        <span class="topo-emoji">🚍</span>
+        <div>
+          <h1>Painel do Coordenador</h1>
+          <p>Fiscal Sambaíba — Garagem 3</p>
+        </div>
+      </div>
+      <div id="usuario-logado" class="usuario-logado" hidden>
+        <span id="usuario-nome"></span>
+        <button id="btn-sair" class="btn-link">Sair</button>
+      </div>
+    </div>
+
+    <main class="container">
+      <!-- Bloco de login — exibido quando não há sessão válida -->
+      <section id="bloco-login" class="login-shell">
+        <div class="login-brand">
+          <div class="login-logo-placeholder" aria-hidden="true">❤</div>
+          <div class="login-empresa">Sambaíba Transportes</div>
+          <div class="login-title">GESTÃO DE LINHAS</div>
+          <div class="login-sub">Sistema Operacional · Fiscalização de Linhas</div>
+        </div>
+
+        <form id="form-login" class="login-card" autocomplete="on" novalidate>
+          <div class="login-card-title">Acesso ao sistema</div>
+          <div class="login-card-hint">Use seu RE de funcionário e senha</div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-re">RE (Registro)</label>
+            <input id="login-re" name="re" type="text" class="form-input" placeholder="Ex: ADMIN001" autocomplete="username" inputmode="text" maxlength="20" required autofocus />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-senha">Senha</label>
+            <div class="password-wrap">
+              <input id="login-senha" name="senha" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="password-toggle" id="toggle-senha" title="Mostrar/esconder senha" aria-label="Mostrar ou esconder senha">👁</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primario btn-full" id="btn-entrar">Entrar</button>
+          <p id="login-erro" class="mensagem-erro" hidden></p>
+        </form>
+
+        <div class="login-footer">
+          <div><span class="status-dot" id="api-status-dot"></span><span id="api-status-text">Verificando servidor...</span></div>
+          <div>fiscal.gestaopatiosambaiba.com.br</div>
+          <div>Fiscal Sambaíba · Garagem 3</div>
+        </div>
+      </section>
+
+      <!-- Bloco do panorama — exibido após login com papel autorizado -->
+      <section id="bloco-panorama" class="cartao" hidden>
+        <h2>Panorama da Linha</h2>
+        <form id="form-panorama" class="form-filtros">
+          <div class="campo">
+            <label for="filtro-linha">Linha</label>
+            <input id="filtro-linha" type="text" placeholder="ex: 1726-10" required />
+          </div>
+          <div class="campo">
+            <label for="filtro-data">Data</label>
+            <input id="filtro-data" type="date" required />
+          </div>
+          <div class="campo">
+            <label for="filtro-tipo-dia">Tipo de dia</label>
+            <select id="filtro-tipo-dia">
+              <option value="UTIL">Útil</option>
+              <option value="SABADO">Sábado</option>
+              <option value="DOMINGO">Domingo</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primario">Buscar</button>
+        </form>
+
+        <p id="panorama-erro" class="mensagem-erro" hidden></p>
+        <p id="panorama-vazio" class="texto-apoio" hidden>Nenhuma partida programada encontrada para os filtros informados.</p>
+
+        <div id="legenda" class="legenda" hidden>
+          <span class="legenda-item"><span class="bolinha bolinha-pendente"></span> Pendente</span>
+          <span class="legenda-item"><span class="bolinha bolinha-realizada"></span> Realizada</span>
+          <span class="legenda-item"><span class="bolinha bolinha-perdida"></span> Perdida</span>
+          <span class="legenda-item"><span class="bolinha bolinha-coberta"></span> Coberta por outra tabela</span>
+        </div>
+
+        <ol id="timeline" class="timeline"></ol>
+      </section>
+    </main>
+
+    <script src="/assets/painel-coordenador.js"></script>
+  </body>
+</html>

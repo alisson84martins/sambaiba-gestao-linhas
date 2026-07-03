@@ -1,0 +1,32 @@
+# Segredos / configuração local — nunca versionar
+.env
+.env.local
+.env.*.local
+
+# Notas internas de deploy/planejamento — citam IP real da VPS e detalhes de
+# infraestrutura de produção, não fazem sentido num repositório público
+deploy/producao/
+prompt-claude-code-*.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+*.egg-info/
+
+# Testes/scripts temporários
+_teste_*.py
+teste_*.py
+
+# Editores / SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
