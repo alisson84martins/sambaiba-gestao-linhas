@@ -7,6 +7,10 @@
 # infraestrutura de produção, não fazem sentido num repositório público
 deploy/producao/
 prompt-claude-code-*.md
+docs/
+
+# Backups locais de patches manuais — não fazem parte do histórico público
+*.bak
 
 # Python
 __pycache__/

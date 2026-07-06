@@ -4,44 +4,97 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fiscal-sambaiba</title>
-    <script type="module" crossorigin src="/assets/index-DQKWVWsR.js"></script>
+    <title>Gestão de Linhas — Fiscal Sambaíba</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/painel-coordenador.css" />
+    <link rel="stylesheet" href="/assets/fiscal-entrada.css" />
     <link rel="stylesheet" crossorigin href="/assets/index-CLqFbEE1.css">
-    <script>
-      window.__terminal = null;
-      document.addEventListener('DOMContentLoaded', function () {
-        var overlay = document.createElement('div');
-        overlay.id = '__terminal_overlay';
-        overlay.style.cssText = [
-          'position:fixed;top:0;left:0;right:0;bottom:0',
-          'background:rgba(17,24,39,0.85)',
-          'display:flex;align-items:center;justify-content:center',
-          'z-index:99999;font-family:system-ui,sans-serif'
-        ].join(';');
-        overlay.innerHTML = `
-          <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:320px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)">
-            <div style="font-size:28px;margin-bottom:4px">🚍</div>
-            <h2 style="font-size:17px;font-weight:700;color:#1e40af;margin:0 0 4px">Fiscal Sambaíba</h2>
-            <p style="color:#6b7280;font-size:13px;margin:0 0 20px">Selecione onde você está fiscalizando:</p>
-            <div style="display:flex;gap:10px">
-              <button onclick="__selectTerminal('TP')" style="flex:1;padding:14px 8px;background:#1d4ed8;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;line-height:1.3">
-                TP<br><span style="font-size:11px;font-weight:400;opacity:.85">Cem. Pq. dos Pinheiros</span>
-              </button>
-              <button onclick="__selectTerminal('TS')" style="flex:1;padding:14px 8px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;line-height:1.3">
-                TS<br><span style="font-size:11px;font-weight:400;opacity:.85">Metrô Santana</span>
-              </button>
-            </div>
-          </div>`;
-        document.body.appendChild(overlay);
-      });
-      function __selectTerminal(t) {
-        window.__terminal = t;
-        var el = document.getElementById('__terminal_overlay');
-        if (el) el.remove();
-      }
-    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <main class="container container-entrada">
+      <!-- Tela 1: login (id bloco-login casa com o tema escuro/vermelho escopado
+           em painel-coordenador.css: #bloco-login.login-shell, #bloco-login .form-input etc.) -->
+      <section id="bloco-login" class="login-shell">
+        <div class="login-brand">
+          <div class="login-logo-placeholder" aria-hidden="true">❤</div>
+          <div class="login-empresa">Sambaíba Transportes</div>
+          <div class="login-title">GESTÃO DE LINHAS</div>
+          <div class="login-sub">Sistema Operacional · Garagem 3</div>
+        </div>
+
+        <form id="form-login" class="login-card" autocomplete="on" novalidate>
+          <div class="login-card-title">Acesso ao sistema</div>
+          <div class="login-card-hint">Use seu RE de funcionário e senha</div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-re">RE (Registro)</label>
+            <input id="login-re" name="re" type="text" class="form-input" placeholder="Ex: 5598" autocomplete="username" inputmode="text" maxlength="20" required autofocus />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-senha">Senha</label>
+            <div class="password-wrap">
+              <input id="login-senha" name="senha" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="password-toggle" id="toggle-senha" title="Mostrar/esconder senha" aria-label="Mostrar ou esconder senha">👁</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primario btn-full" id="btn-entrar">Entrar</button>
+          <p id="login-erro" class="mensagem-erro" hidden></p>
+        </form>
+
+        <div class="login-footer">
+          <div><span class="status-dot" id="api-status-dot"></span><span id="api-status-text">Verificando servidor...</span></div>
+          <div>fiscal.gestaopatiosambaiba.com.br</div>
+          <div>Fiscal Sambaíba · Garagem 3</div>
+        </div>
+      </section>
+
+      <!-- Tela 2: escolher linha + período -->
+      <section id="tela-linha" class="tela-entrada" hidden>
+        <h2>Escolha a linha</h2>
+        <p class="texto-apoio">Selecione a linha e o período do seu turno.</p>
+
+        <form id="form-linha" novalidate>
+          <label class="form-label" for="select-linha">Linha</label>
+          <select id="select-linha" required>
+            <option value="" disabled selected>Carregando linhas...</option>
+          </select>
+
+          <label class="form-label">Período</label>
+          <div class="opcoes-periodo">
+            <button type="button" class="opcao-cartao" data-periodo="MANHA">Manhã</button>
+            <button type="button" class="opcao-cartao" data-periodo="TARDE">Tarde</button>
+          </div>
+
+          <button type="submit" class="btn btn-primario btn-full">Continuar</button>
+          <p id="linha-erro" class="mensagem-erro" hidden></p>
+        </form>
+      </section>
+
+      <!-- Tela 3: escolher terminal TP/TS -->
+      <section id="tela-terminal" class="tela-entrada" hidden>
+        <h2>Onde você está fiscalizando?</h2>
+        <p class="texto-apoio" id="terminal-resumo"></p>
+
+        <div class="opcoes-terminal">
+          <button type="button" class="opcao-terminal opcao-terminal-tp" data-terminal="TP">
+            TP<br><span>Cem. Pq. dos Pinheiros</span>
+          </button>
+          <button type="button" class="opcao-terminal opcao-terminal-ts" data-terminal="TS">
+            TS<br><span>Metrô Santana</span>
+          </button>
+        </div>
+
+        <p id="terminal-carregando" class="texto-apoio" hidden>Abrindo turno...</p>
+        <p id="terminal-erro" class="mensagem-erro" hidden></p>
+        <button type="button" id="btn-voltar-linha" class="btn-link btn-voltar">← Trocar linha/período</button>
+      </section>
+
+      <!-- App React (tela de fiscalização/turno) — montado só depois do turno aberto -->
+      <div id="root" hidden></div>
+    </main>
+
+    <script src="/assets/fiscal-entrada.js"></script>
   </body>
 </html>
