@@ -107,6 +107,8 @@ class RegistroPartida(Base):
     descricao_perda        = Column(Text)
     motivo_troca_operador  = Column(Text)      # justificativa quando a dupla muda em relação à última da tabela no turno
     coberto_por_tabela     = Column(SmallInteger)  # número da tabela que efetivamente cobriu este horário
+    motivo_ajuste_horario  = Column(Text)      # justificativa quando o horário real é editado na confirmação da viagem
+    idempotency_key        = Column(UUID(as_uuid=True))  # chave da fila offline — evita duplicar ao reenviar a mesma ação
     criado_em              = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
     atualizado_em          = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 
@@ -175,3 +177,49 @@ class PrevisaoRecolhida(Base):
     horario_previsto = Column(Time, nullable=False)
     vigencia         = Column(Date, nullable=False)
     criado_em        = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+
+# ─── JORNADA OPERADOR ─────────────────────────────────────────────────────────
+class JornadaOperador(Base):
+    """Horário de entrada/saída de cada operador por tabela — Telas Início/Fim do app do fiscal."""
+    __tablename__ = "jornada_operador"
+    __table_args__ = (
+        UniqueConstraint("turno_fiscal_id", "numero_tabela", "operador_re", "tipo",
+                         name="idx_jornada_operador_unica"),
+        {"schema": "fiscalizacao"},
+    )
+
+    id              = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    turno_fiscal_id = Column(UUID(as_uuid=True),
+                             ForeignKey("fiscalizacao.turno_fiscal.id"), nullable=False)
+    numero_tabela   = Column(SmallInteger, nullable=False)
+    operador_re     = Column(String(20), nullable=False)
+    tipo            = Column(SAEnum("MOTORISTA", "COBRADOR",
+                                    name="tipo_operador_enum", schema="fiscalizacao",
+                                    create_type=False), nullable=False)
+    horario_entrada = Column(Time)
+    horario_saida   = Column(Time)
+    origem          = Column(SAEnum("PRE_DEFINIDO", "MANUAL",
+                                    name="origem_jornada_enum", schema="fiscalizacao",
+                                    create_type=False), nullable=False, default="MANUAL")
+    criado_em       = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+    atualizado_em   = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+
+# ─── REFEICAO ─────────────────────────────────────────────────────────────────
+class Refeicao(Base):
+    """Janela de refeição (início/fim) da dupla, por tabela — Tela Refeição do app do fiscal."""
+    __tablename__ = "refeicao"
+    __table_args__ = (
+        UniqueConstraint("turno_fiscal_id", "numero_tabela", name="idx_refeicao_unica"),
+        {"schema": "fiscalizacao"},
+    )
+
+    id              = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    turno_fiscal_id = Column(UUID(as_uuid=True),
+                             ForeignKey("fiscalizacao.turno_fiscal.id"), nullable=False)
+    numero_tabela   = Column(SmallInteger, nullable=False)
+    motorista_re    = Column(String(20))
+    cobrador_re     = Column(String(20))
+    horario_inicio  = Column(Time)
+    horario_fim     = Column(Time)
+    criado_em       = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+    atualizado_em   = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)

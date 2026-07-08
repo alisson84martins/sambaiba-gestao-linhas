@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 import os
 
 from app.core.config import settings
-from app.routers import auth, turno, relatorios, linhas, escalas, coordenador
+from app.routers import auth, turno, relatorios, linhas, escalas, coordenador, operadores
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -30,6 +30,7 @@ app.include_router(relatorios.router, prefix="/api/v1")
 app.include_router(linhas.router,     prefix="/api/v1")
 app.include_router(escalas.router,    prefix="/api/v1")
 app.include_router(coordenador.router, prefix="/api/v1")
+app.include_router(operadores.router,  prefix="/api/v1")
 
 # ── Endpoints de saúde ────────────────────────────────────────────────────────
 @app.get("/api/health")

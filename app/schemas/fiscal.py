@@ -39,6 +39,14 @@ class TipoEventoEnum(str, Enum):
     RA  = "RA"
     SOS = "SOS"
 
+class TipoOperadorEnum(str, Enum):
+    MOTORISTA = "MOTORISTA"
+    COBRADOR  = "COBRADOR"
+
+class OrigemJornadaEnum(str, Enum):
+    PRE_DEFINIDO = "PRE_DEFINIDO"
+    MANUAL       = "MANUAL"
+
 # ── Auth ─────────────────────────────────────────────────────────────────────
 class LoginRequest(BaseModel):
     re: str
@@ -116,10 +124,64 @@ class RegistrarPartidaRequest(BaseModel):
     descricao_perda: Optional[str] = None
     motivo_troca_operador: Optional[str] = None
     coberto_por_tabela: Optional[int] = None
+    motivo_ajuste_horario: Optional[str] = None
+    idempotency_key: Optional[UUID] = None
 
 class UltimaDuplaResponse(BaseModel):
     motorista_re: Optional[str] = None
     cobrador_re: Optional[str] = None
+
+# ── Operadores (busca de colaborador) ──────────────────────────────────────────
+class OperadorBuscaResponse(BaseModel):
+    re: str
+    nome: str
+    tipo: TipoOperadorEnum
+
+# ── Jornada do Operador (Telas Início/Fim) ─────────────────────────────────────
+class RegistrarEntradaJornadaRequest(BaseModel):
+    numero_tabela: int
+    operador_re: str
+    tipo: TipoOperadorEnum
+    horario_entrada: time
+    origem: OrigemJornadaEnum = OrigemJornadaEnum.MANUAL
+
+class RegistrarSaidaJornadaRequest(BaseModel):
+    numero_tabela: int
+    operador_re: str
+    tipo: TipoOperadorEnum
+    horario_saida: time
+
+class JornadaOperadorResponse(BaseModel):
+    numero_tabela: int
+    operador_re: str
+    tipo: TipoOperadorEnum
+    horario_entrada: Optional[time] = None
+    horario_saida: Optional[time] = None
+    origem: OrigemJornadaEnum
+
+    class Config:
+        from_attributes = True
+
+# ── Refeição (Tela Refeição) ────────────────────────────────────────────────────
+class RegistrarInicioRefeicaoRequest(BaseModel):
+    numero_tabela: int
+    motorista_re: Optional[str] = None
+    cobrador_re: Optional[str] = None
+    horario_inicio: time
+
+class RegistrarFimRefeicaoRequest(BaseModel):
+    numero_tabela: int
+    horario_fim: time
+
+class RefeicaoResponse(BaseModel):
+    numero_tabela: int
+    motorista_re: Optional[str] = None
+    cobrador_re: Optional[str] = None
+    horario_inicio: Optional[time] = None
+    horario_fim: Optional[time] = None
+
+    class Config:
+        from_attributes = True
 
 # ── Evento RA/SOS ─────────────────────────────────────────────────────────────
 class RegistrarEventoRequest(BaseModel):
