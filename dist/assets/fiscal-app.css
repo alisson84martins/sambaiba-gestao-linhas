@@ -1,0 +1,748 @@
+/* fiscal-app.css — telas pós-abertura de turno (Início, Fim, Refeição, Viagens,
+   Menu). Mesmo tema escuro/vermelho de fiscal-entrada.css e painel-coordenador.css
+   (fundo #0a0a0a, cartão #141414, borda #3a1414, vermelho #dc2626, JetBrains Mono
+   + Barlow Condensed). Verde (#22c55e) só para ações de confirmação/sincronização.
+   Mobile-first — layout pensado para o fiscal usar no celular. */
+
+#fiscal-app-root {
+  background: #0a0a0a;
+  color: #f5f5f0;
+  min-height: 100vh;
+  font-family: "JetBrains Mono", monospace;
+  padding-bottom: 76px; /* espaço pra barra inferior fixa não cobrir conteúdo */
+}
+
+#fiscal-app-root * {
+  box-sizing: border-box;
+}
+
+/* #fiscal-app-root vive dentro de <main class="container container-entrada">
+   (fiscal-entrada.css), que já contribui 16px de padding lateral — não
+   repetir aqui pra não sobrar só ~326px úteis num telefone comum. */
+.fa-tela {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 24px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.fa-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #0a0a0a;
+  border-bottom: 1px solid #3a1414;
+}
+
+.fa-voltar {
+  background: none;
+  border: none;
+  color: #f5f5f0;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin: -4px -6px;
+}
+
+.fa-header h1 {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
+.fa-header .fa-voltar + h1 {
+  margin-left: -30px; /* compensa a largura do botão voltar pra manter o título centralizado */
+}
+
+.fa-btn-sync {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #22c55e;
+  color: #22c55e;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fa-btn-sync:active {
+  transform: scale(0.97);
+}
+
+.fa-btn-sync svg {
+  width: 14px;
+  height: 14px;
+}
+
+.fa-btn-sync.fa-sync-pendente {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.fa-btn-sync.fa-sync-girando svg {
+  animation: fa-girar 0.8s linear infinite;
+}
+
+@keyframes fa-girar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Busca + data ─────────────────────────────────────────────────────────── */
+
+.fa-busca-wrap {
+  margin: 16px 0 12px;
+}
+
+.fa-busca {
+  width: 100%;
+  background: #141414;
+  border: 1px solid #3a1414;
+  border-radius: 10px;
+  color: #f5f5f0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  padding: 11px 14px;
+}
+
+.fa-busca::placeholder {
+  color: #737373;
+}
+
+.fa-busca:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+.fa-data {
+  text-align: center;
+  color: #a3a3a3;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+}
+
+/* ── Cards genéricos ──────────────────────────────────────────────────────── */
+
+.fa-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fa-card {
+  background: #141414;
+  border: 1px solid #3a1414;
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+}
+
+.fa-card.fa-card-passada {
+  opacity: 0.55;
+}
+
+.fa-vazio {
+  text-align: center;
+  color: #737373;
+  font-size: 12px;
+  padding: 32px 0;
+}
+
+/* ── Card de tabela (Início / Fim / Refeição) ────────────────────────────── */
+
+.fa-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fa-horario-grande {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: #f5f5f0;
+}
+
+.fa-btn-veiculo {
+  background: transparent;
+  border: 1px solid #dc2626;
+  color: #f87171;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fa-btn-veiculo.fa-preenchido {
+  background: #dc2626;
+  color: #fff;
+}
+
+.fa-linha-tabela {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #262626;
+  font-size: 13px;
+}
+
+.fa-linha-tabela .fa-rotulo {
+  color: #737373;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 4px;
+}
+
+.fa-dupla-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.fa-campo-operador {
+  flex: 1;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.fa-campo-operador.fa-vazio-campo {
+  border-style: dashed;
+}
+
+.fa-campo-operador .fa-operador-chapa {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f5f5f0;
+}
+
+.fa-campo-operador .fa-operador-chapa.fa-placeholder {
+  color: #525252;
+  font-weight: 400;
+}
+
+.fa-campo-operador .fa-operador-rotulo {
+  margin-top: 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #737373;
+}
+
+.fa-horario-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  align-items: flex-end;
+}
+
+.fa-campo-time {
+  flex: 1;
+}
+
+.fa-campo-time label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #737373;
+  margin-bottom: 4px;
+}
+
+.fa-campo-time input[type="time"] {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  color: #f5f5f0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  padding: 9px 10px;
+}
+
+.fa-campo-time input[type="time"]:focus {
+  outline: none;
+  border-color: #dc2626;
+}
+
+/* ── Card "Operações em andamento" (Viagens) ─────────────────────────────── */
+
+.fa-card-operacoes {
+  background: #10190f;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.fa-operacoes-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fa-operacoes-titulo {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #22c55e;
+}
+
+.fa-operacoes-chevron {
+  color: #22c55e;
+  transition: transform 0.15s;
+}
+
+.fa-card-operacoes.fa-aberto .fa-operacoes-chevron {
+  transform: rotate(180deg);
+}
+
+.fa-operacoes-nome {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.fa-operacoes-linhas {
+  color: #a3a3a3;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.fa-operacoes-detalhe {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(34, 197, 94, 0.2);
+  font-size: 12px;
+  color: #d4d4d4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Card de viagem (Viagens) ─────────────────────────────────────────────── */
+
+.fa-viagem-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fa-icone-btn {
+  background: none;
+  border: none;
+  color: #737373;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.fa-icone-btn:hover {
+  color: #f5f5f0;
+}
+
+.fa-viagem-cols {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #a3a3a3;
+  margin-top: 2px;
+}
+
+.fa-viagem-cols b {
+  color: #f5f5f0;
+}
+
+.fa-viagem-meio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.fa-viagem-label {
+  color: #f87171;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.fa-viagem-horario {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.fa-viagem-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.fa-viagem-acoes button {
+  flex: 1;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fa-btn-perdida {
+  background: transparent;
+  border: 1px solid #dc2626;
+  color: #f87171;
+}
+
+.fa-btn-confirmar {
+  background: #22c55e;
+  border: 1px solid #22c55e;
+  color: #06210f;
+}
+
+.fa-viagem-acoes button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.fa-observacoes {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #262626;
+  font-size: 11px;
+  color: #a3a3a3;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Estado do card conforme status da partida */
+.fa-card.fa-status-realizada { border-color: rgba(34, 197, 94, 0.5); }
+.fa-card.fa-status-perdida   { border-color: rgba(220, 38, 38, 0.5); }
+.fa-card.fa-status-sincronizando { border-color: rgba(245, 158, 11, 0.5); }
+
+.fa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.fa-badge-realizada { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.fa-badge-perdida   { background: rgba(220, 38, 38, 0.15); color: #f87171; }
+.fa-badge-pendente-sync { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.fa-badge-erro { background: rgba(220, 38, 38, 0.25); color: #fca5a5; }
+
+/* ── Bottom sheet (Confirmar / Perdida / busca de operador) ─────────────── */
+
+.fa-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+}
+
+.fa-sheet {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #141414;
+  border: 1px solid #3a1414;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.fa-sheet-alca {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: #3a1414;
+  margin: 0 auto 16px;
+}
+
+.fa-sheet h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.fa-sheet .fa-sheet-sub {
+  color: #a3a3a3;
+  font-size: 12px;
+  margin: 0 0 16px;
+}
+
+.fa-motivos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fa-motivo-btn {
+  text-align: left;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #f5f5f0;
+  cursor: pointer;
+}
+
+.fa-motivo-btn.fa-selecionado {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.fa-motivo-btn .fa-motivo-titulo {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.fa-motivo-btn .fa-motivo-desc {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #a3a3a3;
+}
+
+.fa-sheet label.fa-campo-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a3a3a3;
+  margin: 14px 0 6px;
+}
+
+.fa-sheet input[type="time"],
+.fa-sheet input[type="text"],
+.fa-sheet textarea,
+.fa-sheet select {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  color: #f5f5f0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
+.fa-sheet textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.fa-sheet-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.fa-sheet-acoes button {
+  flex: 1;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fa-btn-cancelar {
+  background: transparent;
+  border: 1px solid #3a1414;
+  color: #a3a3a3;
+}
+
+.fa-btn-ok-verde {
+  background: #22c55e;
+  border: 1px solid #22c55e;
+  color: #06210f;
+}
+
+.fa-btn-ok-vermelho {
+  background: #dc2626;
+  border: 1px solid #dc2626;
+  color: #fff;
+}
+
+.fa-sheet-erro {
+  color: #f87171;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.fa-resultado-busca {
+  max-height: 40vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.fa-resultado-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.fa-resultado-item .fa-resultado-nome {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.fa-resultado-item .fa-resultado-chapa {
+  font-size: 11px;
+  color: #a3a3a3;
+}
+
+.fa-resultado-item .fa-resultado-tipo {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #737373;
+}
+
+/* ── Barra inferior de navegação ──────────────────────────────────────────── */
+
+.fa-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  background: #0a0a0a;
+  border-top: 1px solid #3a1414;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.fa-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: #737373;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+}
+
+.fa-nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.fa-nav-item.fa-ativo {
+  color: #f87171;
+}
+
+.fa-nav-item.fa-ativo svg {
+  filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6));
+}
+
+/* ── Menu (Tela 5) ────────────────────────────────────────────────────────── */
+
+.fa-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.fa-menu-card {
+  background: #141414;
+  border: 1px solid #3a1414;
+  border-radius: 14px;
+  padding: 18px 12px;
+  text-align: center;
+  cursor: pointer;
+  color: #f5f5f0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fa-menu-card.fa-menu-placeholder {
+  color: #525252;
+  cursor: default;
+  border-style: dashed;
+  font-weight: 400;
+}
+
+.fa-menu-card.fa-menu-perigo {
+  border-color: #dc2626;
+  color: #f87171;
+}
+
+.fa-menu-card.fa-menu-sair {
+  border-color: #3a1414;
+  color: #a3a3a3;
+}
+
+/* ── Toast simples (confirmação de ação enfileirada) ─────────────────────── */
+
+.fa-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  background: #141414;
+  border: 1px solid #3a1414;
+  color: #f5f5f0;
+  font-size: 12px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  z-index: 60;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}

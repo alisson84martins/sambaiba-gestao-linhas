@@ -1,14 +1,13 @@
 // fiscal-entrada.js — telas de entrada do app do Fiscal (vanilla JS, sem framework)
 //
 // Fluxo: login → escolher linha + período → escolher terminal (TP/TS) → abre turno
-// → entrega pro app React compilado (index-*.js), que segue cuidando só da tela
-// de fiscalização em si (registro de partidas do turno).
+// → entrega pro app do fiscal (fiscal-app.js, vanilla), que cuida das telas
+// pós-abertura de turno (Início/Fim/Refeição/Viagens/Menu).
 //
-// O app React não tem mais código-fonte disponível (só o bundle minificado), então
-// aqui a gente NÃO tenta reimplementar login/turno dentro dele — a gente resolve
-// tudo isso em vanilla e só monta o React já com tudo pronto: window.__preAberto
-// leva fiscal/turno/tabelas/token, e o próprio bundle (com um patch de 1 linha)
-// lê isso na inicialização em vez de começar pela tela de login dele.
+// O handoff é explícito via window.__fiscalApp.init(ctx) (ver entregarParaFiscalApp
+// abaixo) — leva token/fiscal/turno/partidasPorTabela. O bundle React antigo
+// (index-DQKWVWsR.js) ainda existe no repositório mas não é mais montado
+// (ver docs/STATUS-DEPLOY-2026-07-07.md).
 
 (function () {
   "use strict";
@@ -19,7 +18,6 @@
   const telaLogin = document.getElementById("bloco-login");
   const telaLinha = document.getElementById("tela-linha");
   const telaTerminal = document.getElementById("tela-terminal");
-  const root = document.getElementById("root");
 
   const formLogin = document.getElementById("form-login");
   const loginErro = document.getElementById("login-erro");
@@ -131,7 +129,7 @@
       // pra escolher linha/período/terminal de novo.
       const turnoAtivo = await chamarApi("/turno/ativo").catch(function () { return null; });
       if (turnoAtivo) {
-        await entregarParaReact(turnoAtivo);
+        await entregarParaFiscalApp(turnoAtivo);
         return;
       }
 
@@ -242,13 +240,15 @@
     });
 
     window.__terminal = terminal;
-    await entregarParaReact(turno, partidasPorTabela);
+    await entregarParaFiscalApp(turno, partidasPorTabela);
   }
 
-  // ── Handoff pro app React (tela de fiscalização/turno) ──────────────────
-  // Busca partidas (se ainda não tiver buscado) e monta o bundle já com tudo
-  // pronto em window.__preAberto — o patch no bundle lê isso na inicialização.
-  async function entregarParaReact(turno, partidasPorTabelaJaBuscadas) {
+  // ── Handoff pro app do fiscal (Início/Fim/Refeição/Viagens/Menu) ─────────
+  // Busca partidas (se ainda não tiver buscado) e entrega tudo pronto pro
+  // fiscal-app.js via window.__fiscalApp.init(ctx) — formato explícito de
+  // handoff, ver docs/STATUS-DEPLOY-2026-07-07.md. O bundle React
+  // (index-DQKWVWsR.js) fica no repositório mas não é mais montado.
+  async function entregarParaFiscalApp(turno, partidasPorTabelaJaBuscadas) {
     window.__terminal = turno.terminal;
 
     const partidasPorTabela = partidasPorTabelaJaBuscadas || await chamarApi(
@@ -256,32 +256,14 @@
       "?tipo_dia=" + turno.tipo_dia + "&terminal=" + turno.terminal
     );
 
-    const tabelas = partidasPorTabela.map(function (t) {
-      return {
-        tabela: t.tabela,
-        prefixo: "",
-        mot_re: "",
-        cob_re: "",
-        partidas: t.partidas.map(function (p) {
-          return Object.assign({}, p, { statusLocal: "PENDENTE" });
-        }),
-      };
-    });
-
-    window.__preAberto = { fiscal: fiscal, turno: turno, tabelas: tabelas, token: token };
-    montarAppReact();
+    montarFiscalApp({ fiscal: fiscal, turno: turno, partidasPorTabela: partidasPorTabela, token: token });
   }
 
-  function montarAppReact() {
+  function montarFiscalApp(ctxFiscalApp) {
     telaLogin.hidden = true;
     telaLinha.hidden = true;
     telaTerminal.hidden = true;
-    root.hidden = false;
-    const script = document.createElement("script");
-    script.type = "module";
-    script.crossOrigin = "anonymous";
-    script.src = "/assets/index-DQKWVWsR.js";
-    document.body.appendChild(script);
+    window.__fiscalApp.init(ctxFiscalApp);
   }
 
   // ── Inicialização ────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/painel-coordenador.css" />
     <link rel="stylesheet" href="/assets/fiscal-entrada.css" />
+    <link rel="stylesheet" href="/assets/fiscal-app.css" />
     <link rel="stylesheet" crossorigin href="/assets/index-CLqFbEE1.css">
   </head>
   <body>
@@ -91,10 +92,17 @@
         <button type="button" id="btn-voltar-linha" class="btn-link btn-voltar">← Trocar linha/período</button>
       </section>
 
-      <!-- App React (tela de fiscalização/turno) — montado só depois do turno aberto -->
+      <!-- App do fiscal pós-abertura de turno (Início/Fim/Refeição/Viagens/Menu),
+           vanilla JS — montado via window.__fiscalApp.init(ctx) depois do turno
+           aberto. Ver dist/assets/fiscal-app.js. -->
+      <div id="fiscal-app-root" hidden></div>
+
+      <!-- Bundle React antigo — fica no repositório mas não é mais montado
+           (ver docs/STATUS-DEPLOY-2026-07-07.md). -->
       <div id="root" hidden></div>
     </main>
 
+    <script src="/assets/fiscal-app.js"></script>
     <script src="/assets/fiscal-entrada.js"></script>
   </body>
 </html>
